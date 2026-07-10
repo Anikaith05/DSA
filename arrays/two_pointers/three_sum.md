@@ -65,7 +65,33 @@ After finding a valid triplet:
 
 This prevents adding the same triplet multiple times.
 
----
+---### 🧭 Why `i - 1` for `i` and `j + 1` for `j`?
+
+It depends on the direction each pointer moves.
+
+* `i` moves **forward** (`i++`), so after moving it, compare the new value with the value it just passed:
+
+  `nums[i] == nums[i - 1]`
+
+  If they are equal, the new `i` is a duplicate of a value already checked.
+
+* `j` moves **backward** (`j--`), so after moving it, compare the new value with the value it just passed:
+
+  `nums[j] == nums[j + 1]`
+
+  If they are equal, the new `j` is a duplicate of a value already checked.
+
+### Quick rule
+
+| Pointer | Movement    | Compare with |
+| ------- | ----------- | ------------ |
+| `i`     | moves right | `i - 1`      |
+| `j`     | moves left  | `j + 1`      |
+| `k`     | moves right | `k - 1`      |
+
+The comparison always looks at the value the pointer has **already visited**.
+
+
 
 ## 🔍 Important Example
 
