@@ -2,18 +2,21 @@
 
 using namespace std;
 
-class Solution {
-public:
-    int maxSubArray(vector<int>& nums) {
-        int n=nums.size();
-        int msum=INT_MIN;
-        int sum=0;
-        for(int i=0;i<n;i++){
-            sum=max(nums[i],nums[i]+sum);
-            if(sum>msum){
-                msum=sum;
-            }
+void sortColors(vector<int>& nums){
+    int n=nums.size();
+    int start=0,mid=0,high=n-1;
+    while(mid<=high){
+        if(nums[mid]==0){
+            swap(nums[mid],nums[start]);
+            start++;
+            mid++;
         }
-        return msum;
+        else if(nums[mid]==1){
+            mid++;
+        }
+        else{
+            swap(nums[mid],nums[high]);
+            high--;
+        }
     }
-};
+}
