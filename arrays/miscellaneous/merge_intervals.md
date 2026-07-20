@@ -94,8 +94,8 @@ Since the intervals are sorted, the current interval can only overlap with the *
 | 2️⃣ | Create an empty answer list |
 | 3️⃣ | Traverse each interval |
 | 4️⃣ | If answer is empty → Add interval |
-| 5️⃣ | Else check overlap with last merged interval |
-| 6️⃣ | If overlap → Extend the ending point |
+| 5️⃣ | Else check overlap with last merged interval in the answer_list |
+| 6️⃣ | If overlap → Extend the ending point, create the new merged interval and push it onto the answer_list |
 | 7️⃣ | Else → Push as a new interval |
 
 ---
