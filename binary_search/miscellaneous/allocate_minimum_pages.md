@@ -1,100 +1,72 @@
 # Allocate Minimum Pages
 
-## Intuition
+## 💡 Core Observation
 
-The objective is to **minimize the maximum number of pages assigned to any student**.
+We need to **minimize the maximum pages assigned to any student**.
 
-At first glance, this looks like an optimization problem, but instead of directly searching for the answer, we can convert it into a **decision problem**.
+Instead of directly finding the answer, convert it into a **Yes/No** question:
 
-Instead of asking:
+> **Can every student be assigned books such that no student gets more than `mid` pages?**
 
-> "What is the minimum possible maximum number of pages?"
-
-we ask:
-
-> "Is it possible to allocate all books such that no student receives more than `X` pages?"
-
-This question has only two possible answers:
-
-- **Yes**
-- **No**
-
-If it is possible for some value `X`, then it will also be possible for every value larger than `X`.
-
-If it is impossible for some value `X`, then it will also be impossible for every value smaller than `X`.
-
-This creates a monotonic pattern:
-
-```
-Invalid Invalid Invalid ... Valid Valid Valid
-```
-
-which is exactly the pattern required for **Binary Search on Answer**.
+This makes it a **Binary Search on Answer** problem.
 
 ---
 
-# Search Space
+# 🔍 Search Space
 
-We now determine the minimum and maximum possible answers.
+| Lower Bound | Upper Bound |
+|-------------|-------------|
+| `max(arr)` | `sum(arr)` |
 
-### Lower Bound
+### Why?
 
-The answer can never be smaller than the largest book.
-
-Why?
-
-Because one student must read that book.
-
-```
-low = max(arr)
-```
-
-### Upper Bound
-
-The largest possible answer occurs when one student receives every book.
-
-```
-high = sum(arr)
-```
-
-Therefore, our search space becomes
-
-```
-[max(arr), sum(arr)]
-```
+| Bound | Reason |
+|--------|--------|
+| `max(arr)` | One student must take the largest book. |
+| `sum(arr)` | One student can take all books. |
 
 ---
 
-# Greedy Feasibility Check
-
-For every candidate answer (`mid`), we check whether an allocation is possible.
-
-We process the books from left to right.
-
-For the current student,
-
-- If the next book fits within the current page limit, assign it.
-- Otherwise, allocate a new student and assign that book to them.
-
-This greedy strategy always uses the **minimum number of students** required for the chosen page limit.
-
-If the number of students required is
+# 📈 Monotonic Property
 
 ```
-<= k
+mid
+
+❌ ❌ ❌ ❌ ✅ ✅ ✅ ✅
 ```
 
-then the allocation is possible.
+If a page limit is possible,
 
-Otherwise, it is impossible.
+then every larger page limit is also possible.
+
+This monotonicity allows Binary Search.
 
 ---
 
-# Why do we check `students <= k`?
+# ✅ Feasibility Check (`isValid()`)
 
-The greedy algorithm computes the **minimum number of students required**.
+Greedily assign books.
 
-Suppose
+| Condition | Action |
+|-----------|--------|
+| `pages + book <= mid` | Give current book to same student |
+| Otherwise | Allocate a new student |
+
+Finally,
+
+```cpp
+students <= k
+```
+
+means **Valid**.
+
+---
+
+# ❓Why `students <= k` instead of `students == k`?
+
+The greedy algorithm computes the **minimum students required**.
+
+Example:
 
 ```
 Books = [10,20,30]
@@ -108,9 +80,9 @@ Greedy gives
 Student 1 : 10 20 30
 ```
 
-Only one student is used.
+Students used = **1**
 
-This is still valid because we can split the contiguous allocation into
+We can always split it into
 
 ```
 Student 1 : 10
@@ -118,118 +90,64 @@ Student 2 : 20
 Student 3 : 30
 ```
 
-Every student still receives at least one book.
+without exceeding `mid`.
 
-The allocation remains contiguous.
+> **Greedy finds the minimum students needed, not the final allocation.**
 
-No student's pages exceed `mid`.
+Hence,
 
-Therefore,
-
-```
+```cpp
 students <= k
 ```
 
-is the correct feasibility condition.
+---
+
+# 🚀 Algorithm
+
+1. If `k > n`, return `-1`.
+2. Set
+
+```cpp
+low = max(arr);
+high = sum(arr);
+```
+
+3. Binary Search on `[low, high]`.
+4. Run `isValid(mid)`.
+5. If valid, search left half.
+6. Else, search right half.
 
 ---
 
-# Algorithm
+# ⏱ Complexity
 
-1. If `k > n`, return `-1` since every student must receive at least one book.
-2. Compute
-   - `low = max(arr)`
-   - `high = sum(arr)`
-3. Perform Binary Search on the answer.
-4. For every `mid`
-   - Run the greedy feasibility check.
-   - If allocation is possible, search the left half.
-   - Otherwise, search the right half.
-5. Return the smallest valid value found.
+| Metric | Complexity |
+|---------|------------|
+| Time | **O(n log(sum))** |
+| Space | **O(1)** |
 
 ---
 
-# Dry Run
+# 🧠 Key Takeaways
 
-```
-Books = [12,34,67,90]
-k = 2
-```
-
-Search Space
-
-```
-low = 90
-high = 203
-```
-
-Suppose
-
-```
-mid = 113
-```
-
-Allocation
-
-```
-Student 1 : 12 + 34 + 67 = 113
-Student 2 : 90
-```
-
-Students used = 2
-
-Valid.
-
-Now Binary Search continues searching for a smaller valid answer.
-
-Eventually,
-
-```
-Answer = 113
-```
+- ✅ Convert optimization into a **decision problem**.
+- ✅ Binary Search on **Answer**, not on the array.
+- ✅ Search space = **`[max(arr), sum(arr)]`**.
+- ✅ Greedy computes the **minimum students required**.
+- ✅ Feasible if **`students <= k`**.
+- ✅ Binary Search returns the **smallest valid** answer.
 
 ---
 
-# Complexity Analysis
+# 📚 Pattern Recognition
 
-Let
+Whenever a problem asks you to:
 
-- `n` = number of books
-- `S` = sum of all pages
-
-For every Binary Search iteration, we scan the array once.
-
-Time Complexity
-
-```
-O(n × log(S))
-```
-
-Space Complexity
-
-```
-O(1)
-```
-
----
-
-# Key Observation
-
-This problem belongs to the class of **Binary Search on Answer** problems.
-
-Whenever a problem asks you to
-
-- Minimize the maximum
-- Maximize the minimum
-- Partition an array into `k` contiguous parts
+- Minimize the **maximum**
+- Maximize the **minimum**
 - Allocate work among `k` people
+- Partition an array into contiguous parts
 
-and the answer forms a monotonic pattern
-
-```
-FFFFFTTTTT
-```
-
-think of
+Think:
 
 > **Binary Search on Answer + Greedy Feasibility Check**
