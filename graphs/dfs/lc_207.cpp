@@ -1,39 +1,36 @@
 #include<bits/stdc++.h>
 using namespace std;
 
+//do the dfs_traversal
+//each node in visited has 3 states-> 0->unvisited,1->processsing(in the stack),2->we are done processing(removed form the stack)
+//in dfs traversal at every vertex we look at all of its neighbours and if visited[neighbour]==1->we say that the cycle is detected, else we just mark the neighbour as 1 in visited and then push it into the stack(call the recursive function), after we are done with processing all the node of a vertex we mark it as 2 in the visited 
 class Solution {
 public:
-void dfs_traversal(vector<vector<int>>&adj,int vertex,vector<int>&visited,bool &cycle){
-    visited[vertex]=1;
-    for(int node=0;node<adj[0].size();node++){
-    if(adj[vertex][node]==1){
-        if(visited[node]==0){
-            dfs_traversal(adj,node,visited,cycle);
+    void dfs_traversal(vector<vector<int>>&adj,int vertex,vector<int>&visited,bool&cycle){
+        visited[vertex]=1;
+        for(int node:adj[vertex]){
+            if(visited[node]==1){
+                cycle=true;
+                return;
+            }
+            else if(visited[node]==0){
+                visited[node]=1;
+                dfs_traversal(adj,node,visited,cycle);
+            }
         }
-        else if(visited[node]==1){
-            cycle=true;
-            return;
-        }
+        visited[vertex]=2;
     }
-    }
-    visited[vertex]=2;
-}
-    bool canFinish(int numCourses, vector<vector<int>>& prerequisites) {
-        int n=prerequisites.size();
-        if(n==1||numCourses==1||n==0){
-            return true;
+    bool canFinish(int numCourses, vector<vector<int>>& prerequisites){
+        vector<vector<int>>adj(numCourses);
+        for(vector<int> i:prerequisites){
+            adj[i[1]].push_back(i[0]);
         }
-        vector<vector<int>>adj(numCourses,vector<int>(numCourses,0));
-        for(int i=0;i<n;i++){
-            adj[prerequisites[i][0]][prerequisites[i][1]]=1;
-        }
-        vector<int>visited(numCourses,0);
+
         bool cycle=false;
         for(int i=0;i<numCourses;i++){
-        if(visited[i]==0){
+            vector<int>visited(numCourses,0);
             dfs_traversal(adj,i,visited,cycle);
         }
-    }
         return !cycle;
     }
 };
