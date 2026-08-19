@@ -9,7 +9,6 @@ A graph is bipartite if we can divide all vertices into **two groups** such that
 Another way to think about it:
 
 > We should be able to color every node using two colors so that adjacent nodes always have different colors.
-
 ---
 
 ## Approach
