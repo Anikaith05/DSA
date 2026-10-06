@@ -3,30 +3,30 @@ using namespace std;
 
 class Solution {
 public:
-    void calc_combinations(vector<vector<int>>&answer,vector<int>&candidates,int target,int i,vector<int>buffer,int sum){
-        if(sum==target){
+    void calc_combinations(vector<int>&candidates,vector<vector<int>>&answer,int target,int i,vector<int>buffer){
+        if(target==0){
+            sort(buffer.begin(),buffer.end());
             answer.push_back(buffer);
             return;
         }
-        if(i>=candidates.size()){
-            return;
+        if(target<0||i>=candidates.size()) return;
+
+        for(int j=i;j<candidates.size();j++){
+            buffer.push_back(candidates[j]);
+            calc_combinations(candidates,answer,target-candidates[j],j,buffer);
+            buffer.pop_back();
         }
 
-        calc_combinations(answer,candidates,target,i+1,buffer,sum);
-        for(int j=1;j*candidates[i]<=target-sum;j++){
-            vector<int>sample(buffer.begin(),buffer.end());
-            for(int k=0;k<j;k++){
-                sample.push_back(candidates[i]);
-            }
-        calc_combinations(answer,candidates,target,i+1,sample,sum+j*candidates[i]);
-        }
     }
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         vector<vector<int>>answer;
-
         vector<int>buffer;
-        calc_combinations(answer,candidates,target,0,buffer,0);
-        
-        return answer;
+        calc_combinations(candidates,answer,target,0,buffer);
+
+        set<vector<int>> st(answer.begin(),answer.end());
+
+        vector<vector<int>> ans(st.begin(),st.end());
+
+        return ans;
     }
 };
