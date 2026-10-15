@@ -4,7 +4,6 @@ using namespace std;
 class Solution {
   public:
     void nearlySorted(vector<int>& arr, int k) {
-        // code here
         int n=arr.size();
         priority_queue<int,vector<int>,greater<int>>pq;
         vector<int>sorted;
