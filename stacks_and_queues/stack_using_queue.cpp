@@ -1,53 +1,50 @@
-class MyQueue {
+#include<bits/stdc++.h>
+using namespace std;
+
+class MyStack {
+
 private:
-stack<int>st1;
-stack<int>st2;
+queue<int>q1;
+
 public:
-    MyQueue() {
-        while(!st1.empty()){
-            st1.pop();
-        }
-        while(!st2.empty()){
-            st2.pop();
+    MyStack() {
+        queue<int>q1;
+        while(!q1.empty()){
+            q1.pop();
         }
     }
-    
-    void push(int x) {
-        st1.push(x);
+
+    void push(int x){
+        int n=q1.size();
+        q1.push(x);
+        for(int i=0;i<n;i++){
+            q1.push(q1.front());
+            q1.pop();
+        }
     }
     
     int pop() {
-        if(st2.empty()){
-            while(!st1.empty()){
-                st2.push(st1.top());
-                st1.pop();
-            }
-        }
-        int x=st2.top();
-        st2.pop();
+        if(q1.empty()) return -1;
+        int x=q1.front();
+        q1.pop();
         return x;
     }
     
-    int peek() {
-        if(st2.empty()){
-            while(!st1.empty()){
-                st2.push(st1.top());
-                st1.pop();
-            }
-        }
-        return st2.top();
+    int top() {
+        if(q1.empty()) return -1;
+        return q1.front();
     }
     
     bool empty() {
-        return st2.empty()&&st1.empty();
+        return q1.empty();
     }
 };
 
 /**
- * Your MyQueue object will be instantiated and called as such:
- * MyQueue* obj = new MyQueue();
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack* obj = new MyStack();
  * obj->push(x);
  * int param_2 = obj->pop();
- * int param_3 = obj->peek();
+ * int param_3 = obj->top();
  * bool param_4 = obj->empty();
  */
