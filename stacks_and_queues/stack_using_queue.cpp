@@ -1,6 +1,3 @@
-#include<bits/stdc++.h>
-using namespace std;
-
 class MyQueue {
 private:
 stack<int>st1;
@@ -16,30 +13,33 @@ public:
     }
     
     void push(int x) {
-        while(!st2.empty()){
-            st1.push(st2.top());
-            st2.pop();
-        }
         st1.push(x);
-
-        while(!st1.empty()){
-            st2.push(st1.top());
-            st1.pop();
-        }
     }
     
     int pop() {
+        if(st2.empty()){
+            while(!st1.empty()){
+                st2.push(st1.top());
+                st1.pop();
+            }
+        }
         int x=st2.top();
         st2.pop();
         return x;
     }
     
     int peek() {
+        if(st2.empty()){
+            while(!st1.empty()){
+                st2.push(st1.top());
+                st1.pop();
+            }
+        }
         return st2.top();
     }
     
     bool empty() {
-        return st2.empty();
+        return st2.empty()&&st1.empty();
     }
 };
 
