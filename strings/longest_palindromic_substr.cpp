@@ -1,21 +1,5 @@
-#include<bits/stdc++.h>
-using namespace std;
-
 class Solution {
 public:
-    bool isPalindrome(string s,int i,int j){
-        string str=s.substr(i,j-i+1);
-        int n=str.length();
-        int k=0,l=n-1;
-        while(k<=l){
-            if(str[k]!=str[l]){
-                return false;
-            }
-            k++;
-            l--;
-        }
-        return true;
-    }
     string longestPalindrome(string s) {
         int n=s.length();
         int max_len=INT_MIN;
