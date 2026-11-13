@@ -11,9 +11,22 @@ Instead of checking all prefixes manually (which takes $O(N^2)$ time), we can cl
 
 **The Clever Trick:**
 1. Create a new string: `combined = s + '#' + reverse(s)`.
-2. The `#` acts as a strict boundary separator. It ensures that our prefix and suffix don't overlap in a way that exceeds the length of the original string.
-3. If we calculate the LPS array for this `combined` string, the last value in the array will tell us the exact length of the longest prefix of `s` that is also a suffix of `reverse(s)`. 
-4. A prefix of `s` that matches a suffix of `reverse(s)` is, by definition, a palindrome!
+2. If we calculate the LPS array for this `combined` string, the last value in the array will tell us the exact length of the longest prefix of `s` that is also a suffix of `reverse(s)`. 
+3. A prefix of `s` that matches a suffix of `reverse(s)` is, by definition, a palindrome!
+
+### Why do we need the `#` separator?
+The `#` acts as a strict boundary separator. It ensures that the LPS calculation does not "bleed over" and match a prefix that is longer than the original string itself. 
+
+**What happens without it?**
+Imagine the string `s = "aaaa"`.
+*   `rev_s` is also `"aaaa"`.
+*   If we just combined them without `#`: `combined = "aaaaaaaa"`. 
+*   The LPS of the last character would be `7` (meaning a prefix of length 7 matches a suffix of length 7). But our original string is only `4` characters long! 
+
+**What happens with it?**
+By adding a character that is guaranteed *not* to be in the input string (like `#`), we force the LPS matching to stop at the boundary.
+*   `combined = "aaaa#aaaa"`.
+*   The `#` breaks the continuous match, ensuring the LPS array maxes out at the exact length of the original string. The LPS of the last character will correctly be `4`.
 
 ## English Pseudocode
 
@@ -36,7 +49,7 @@ Instead of checking all prefixes manually (which takes $O(N^2)$ time), we can cl
 
 ## Dry Run
 
-Let's do a dry run with an example that highlights **why the `#` separator is absolutely necessary** (a major edge case).
+Let's do a dry run with an example.
 
 **Example String:** `s = "aaba"`
 
@@ -48,8 +61,6 @@ Is "aaba" a palindrome? No.
 * `rev_s` = `"abaa"`
 * `lps_str` = `"aaba#abaa"`
 
-*(Caveat note: If we didn't use `#`, `lps_str` would be `"aabaabaa"`. The LPS of the last character would be 5 ("aabaa"), which is longer than the original string! The `#` forces the LPS to stop at the boundary.)*
-
 **Step 4: Compute LPS Array for `"aaba#abaa"`**
 
 Let's build the `lps` array of size 9.
@@ -57,7 +68,7 @@ Let's build the `lps` array of size 9.
 * `i = 1, j = 0`: `s[1]`('a') == `s[0]`('a') $\rightarrow$ match. `lps[1] = 1`, `j = 1`.
 * `i = 2, j = 1`: `s[2]`('b') != `s[1]`('a') $\rightarrow$ mismatch. Fallback `j` to `lps[0]` = 0. `s[2]`('b') != `s[0]`('a'). `lps[2] = 0`.
 * `i = 3, j = 0`: `s[3]`('a') == `s[0]`('a') $\rightarrow$ match. `lps[3] = 1`, `j = 1`.
-* `i = 4, j = 1`: `s[4]`('#') != `s[1]`('a') $\rightarrow$ mismatch. Fallback `j` to 0. `lps[4] = 0`. *(The separator works!)*
+* `i = 4, j = 1`: `s[4]`('#') != `s[1]`('a') $\rightarrow$ mismatch. Fallback `j` to 0. `lps[4] = 0`. *(The separator works, resetting the count!)*
 * `i = 5, j = 0`: `s[5]`('a') == `s[0]`('a') $\rightarrow$ match. `lps[5] = 1`, `j = 1`.
 * `i = 6, j = 1`: `s[6]`('b') != `s[1]`('a') $\rightarrow$ mismatch. Fallback `j` to 0. `lps[6] = 0`.
 * `i = 7, j = 0`: `s[7]`('a') == `s[0]`('a') $\rightarrow$ match. `lps[7] = 1`, `j = 1`.
